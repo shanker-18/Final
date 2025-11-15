@@ -32,6 +32,7 @@ import { SmallCloseIcon, SearchIcon } from '@chakra-ui/icons';
 import { FaRobot, FaPaperPlane, FaCode, FaGithub, FaReact, FaNodeJs, FaDatabase, FaTimes, FaExpand } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../services/api';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion.create(Flex);
@@ -213,7 +214,13 @@ const ChatBot = ({ isFullPage = false }) => {
     setIsTyping(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/chat', {
+      const chatApiUrl = API_BASE_URL ? `${API_BASE_URL}/api/chat` : '';
+
+      if (!chatApiUrl) {
+        throw new Error('Chat API is not configured.');
+      }
+
+      const response = await fetch(chatApiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -44,7 +44,7 @@ import {
 import AnimatedBackground from '../components/AnimatedBackground';
 import { getOptimizedVideoUrl, preloadVideoThumbnail, preloadMultipleThumbnails } from '../utils/videoUtils';
 import VideoPlayer from '../components/VideoPlayer';
-import { projectsApi, videoApi } from '../services/api';
+import { projectsApi, videoApi, API_BASE_URL } from '../services/api';
 import { useInView } from 'react-intersection-observer';
 
 // Create motion components
@@ -634,7 +634,7 @@ const DevReels = () => {
     }
     
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/projects');
+      const response = await fetch(`${API_BASE_URL}/api/projects`);
       const data = await response.json();
       
       // Filter and process projects with videos

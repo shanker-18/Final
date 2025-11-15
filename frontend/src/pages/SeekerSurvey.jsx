@@ -42,6 +42,7 @@ import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../config/firebase';
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import axios from 'axios';
+import { API_BASE_URL } from '../services/api';
 
 const MotionBox = motion.create(Box);
 const MotionStack = motion.create(Stack);
@@ -182,7 +183,7 @@ const SeekerSurvey = () => {
 
     try {
       // Call AI recommendation API
-      const response = await axios.post('http://localhost:5000/api/survey/recommendations', {
+      const response = await axios.post(`${API_BASE_URL}/api/survey/recommendations`, {
         userId: auth.currentUser?.uid,
         survey: surveyData,
       });

@@ -5,6 +5,8 @@
  * to improve loading performance.
  */
 
+import { API_BASE_URL } from './api';
+
 // In-memory cache for thumbnails
 const thumbnailCache = new Map();
 

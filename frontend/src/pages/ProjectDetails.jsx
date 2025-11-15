@@ -26,8 +26,9 @@ import AnimatedBackground from '../components/AnimatedBackground';
 import { getVideoThumbnailUrl, getOptimizedVideoUrl, preloadVideoThumbnail } from '../utils/videoUtils';
 import { useUser } from '../contexts/UserContext';
 import { getUserRole } from '../utils/userRole';
+import { API_BASE_URL } from '../services/api';
 
-const API_URL = 'http://127.0.0.1:5000/api';
+const API_URL = `${API_BASE_URL}/api`;
 
 // Create motion components
 const MotionBox = motion.create(Box);

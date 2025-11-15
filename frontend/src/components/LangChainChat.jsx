@@ -25,6 +25,10 @@ import { FaPaperPlane, FaRobot, FaUser, FaComments } from 'react-icons/fa';
 
 const MotionBox = motion.create(Box);
 
+const RAG_API_BASE_URL =
+  import.meta.env.VITE_RAG_API_BASE_URL ||
+  (import.meta.env.DEV ? 'http://localhost:5001' : '');
+
 // Message component to display chat messages
 const Message = ({ message, isUser }) => {
   const bgColor = isUser 
@@ -209,7 +213,12 @@ const LangChainChat = () => {
   }, [isOpen]);
 
   const checkBotStatus = () => {
-    fetch('http://localhost:5001/chat/status')
+    if (!RAG_API_BASE_URL) {
+      setBotStatus('offline');
+      return;
+    }
+
+    fetch(`${RAG_API_BASE_URL}/chat/status`)
       .then(response => response.json())
       .then(data => {
         setBotStatus(data.status === 'online' ? 'online' : 'offline');
@@ -243,7 +252,11 @@ const LangChainChat = () => {
     setIsTyping(true);
     
     try {
-      const response = await fetch('http://localhost:5001/chat', {
+      if (!RAG_API_BASE_URL) {
+        throw new Error('RAG chat API is not configured.');
+      }
+
+      const response = await fetch(`${RAG_API_BASE_URL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -32,6 +32,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 // External auth removed; access is handled server-side
 import AnimatedBackground from '../components/AnimatedBackground';
 import { FaUpload } from 'react-icons/fa';
+import { API_BASE_URL } from '../services/api';
 
 const EditProject = () => {
   const { projectId } = useParams();
@@ -82,7 +83,7 @@ const EditProject = () => {
         });
 
         const token = await currentUser.getIdToken();
-        const response = await fetch(`http://127.0.0.1:8000/api/projects/${projectId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -213,7 +214,7 @@ const EditProject = () => {
       const formData = new FormData();
       formData.append('video', videoFile);
       
-      const response = await fetch(`http://127.0.0.1:8000/api/projects/${projectId}/video`, {
+      const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/video`, {
         method: 'POST',
         body: formData,
       });
@@ -308,7 +309,7 @@ const EditProject = () => {
       console.log('Sending update data:', updateData);
 
       // Use the new endpoint with proper error handling
-      const response = await fetch(`http://127.0.0.1:8000/api/projects/${projectId}/update`, {
+      const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/update`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -354,7 +355,7 @@ const EditProject = () => {
       }
 
       const token = await currentUser.getIdToken();
-      const response = await fetch(`http://127.0.0.1:8000/api/projects/${projectId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

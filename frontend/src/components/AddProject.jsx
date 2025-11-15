@@ -27,8 +27,9 @@ import { useUser } from '../contexts/UserContext';
 // External auth removed; AddProject relies on UserContext
 import { CloseIcon } from '@chakra-ui/icons';
 import ProjectVideo from './ProjectVideo';
+import { API_BASE_URL } from '../services/api';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = `${API_BASE_URL}/api`;
 
 const AddProject = () => {
   const navigate = useNavigate();

@@ -18,6 +18,7 @@ import {
 import { motion } from 'framer-motion';
 import { useUser } from '../contexts/UserContext';
 import ProjectVideo from './ProjectVideo';
+import { API_BASE_URL } from '../services/api';
 
 const MotionBox = motion.create(Box);
 const MotionContainer = motion.create(Container);
@@ -123,7 +124,7 @@ const ProjectDetails = () => {
       try {
         if (!id) return;
         
-        const response = await fetch(`http://127.0.0.1:8000/api/projects/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/projects/${id}`, {
           signal: controller.signal
         });
         

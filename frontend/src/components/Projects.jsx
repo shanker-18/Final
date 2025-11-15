@@ -237,7 +237,7 @@ const Projects = () => {
         }
 
         // Fetch projects from backend API
-        const response = await fetch('http://127.0.0.1:8000/api/projects');
+        const response = await fetch(`${API_BASE_URL}/api/projects`);
         if (!response.ok) {
           throw new Error('Failed to fetch projects');
         }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Heading, Text, SimpleGrid, Card, CardBody, Stack, Button, Container, Badge, useToast } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../services/api';
 
 const MyProjects = () => {
     const [projects, setProjects] = useState([]);
@@ -27,7 +28,7 @@ const MyProjects = () => {
                 setUserType(userDoc.data().userType);
 
                 // Fetch projects from backend API
-                const response = await fetch(`http://127.0.0.1:5000/api/ads`);
+                const response = await fetch(`${API_BASE_URL}/api/ads`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch projects');
                 }

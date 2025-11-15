@@ -14,10 +14,11 @@ import {
 import { motion } from 'framer-motion';
 import { StarIcon } from '@chakra-ui/icons';
 import { useUser } from '../contexts/UserContext';
+import { API_BASE_URL } from '../services/api';
 
 const MotionBox = motion.create(Box);
 
-const API_URL = 'http://127.0.0.1:5000/api';
+const API_URL = `${API_BASE_URL}/api`;
 
 const SavedProjects = () => {
   const { userData } = useUser();
@@ -56,7 +57,7 @@ const SavedProjects = () => {
     };
 
     fetchSavedProjects();
-  }, [JSON.stringify(savedIds)]);
+  }, [JSON.stringify(savedIds), API_URL]);
 
   if (loading) {
     return (
