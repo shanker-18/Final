@@ -1,4 +1,6 @@
-const API_BASE_URL = 'http://127.0.0.1:5000';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV ? 'http://127.0.0.1:5000' : '');
 
 // Add retry logic for API calls
 const retry = async (fn, retries = 3, delay = 1000) => {
