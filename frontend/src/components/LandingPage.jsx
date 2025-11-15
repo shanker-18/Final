@@ -425,28 +425,28 @@ const ExpertiseSection = () => {
       title: "Full-Stack Development",
       description: "Expert developers ready to bring your ideas to life with cutting-edge technology and modern frameworks.",
       gradient: "linear(to-r, gold.200, gold.400)",
-      bgImage: "url('/src/assets/dev-pattern.svg')"
+      bgImage: "url('/dev-pattern.svg')"
     },
     {
       icon: FaRocket,
       title: "AI & Innovation",
       description: "Innovative AI solutions that push boundaries and create exceptional user experiences.",
       gradient: "linear(to-r, gold.200, gold.400)",
-      bgImage: "url('/src/assets/ai-pattern.svg')"
+      bgImage: "url('/ai-pattern.svg')"
     },
     {
       icon: FaUsers,
       title: "Team Collaboration",
       description: "Seamless collaboration between freelancers and clients for successful project delivery.",
       gradient: "linear(to-r, gold.200, gold.400)",
-      bgImage: "url('/src/assets/team-pattern.svg')"
+      bgImage: "url('/team-pattern.svg')"
     },
     {
       icon: FaLightbulb,
       title: "Creative Solutions",
       description: "Creative approaches to solve complex challenges and deliver outstanding results.",
       gradient: "linear(to-r, gold.200, gold.400)",
-      bgImage: "url('/src/assets/creative-pattern.svg')"
+      bgImage: "url('/creative-pattern.svg')"
     }
   ];
 
@@ -871,7 +871,7 @@ const Navigation = () => (
   >
     <HStack spacing={4}>
       <Image
-        src="/src/assets/logo.svg"
+        src="/logo.svg"
         alt="Freelance Hub Logo"
         h="40px"
         objectFit="contain"
