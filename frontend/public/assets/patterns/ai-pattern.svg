@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="ai-nodes" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+      <circle cx="25" cy="25" r="1" fill="rgba(255,215,0,0.2)"/>
+      <circle cx="12.5" cy="12.5" r="1" fill="rgba(255,215,0,0.2)"/>
+      <circle cx="37.5" cy="37.5" r="1" fill="rgba(255,215,0,0.2)"/>
+      <path d="M25 25L12.5 12.5M25 25L37.5 37.5" stroke="rgba(255,215,0,0.1)" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="100" height="100" fill="url(#ai-nodes)"/>
+  <g fill="none" stroke="rgba(255,215,0,0.15)" stroke-width="0.5">
+    <circle cx="50" cy="50" r="40"/>
+    <circle cx="50" cy="50" r="30"/>
+    <circle cx="50" cy="50" r="20"/>
+  </g>
+</svg> 
