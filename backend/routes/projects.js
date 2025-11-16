@@ -150,7 +150,7 @@ router.post('/:id/upload-video', upload.single('file'), async (req, res) => {
     console.error('Error uploading project video:', err);
     return res.status(500).json({
       success: false,
-      message: 'Failed to upload video',
+      message: err?.message || 'Failed to upload video',
     });
   }
 });

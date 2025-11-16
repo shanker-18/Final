@@ -399,7 +399,7 @@ const AddProject = () => {
           border="1px"
           borderColor="gray.700"
         >
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate>
             <VStack spacing={6}>
               <FormControl isRequired>
                 <FormLabel color="gray.200">Title</FormLabel>
