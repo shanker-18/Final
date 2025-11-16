@@ -38,7 +38,9 @@ const MotionBox = motion(Box);
 const MotionFlex = motion.create(Flex);
 
 // Message component for chat
-const Message = React.memo(({ message, isUser }) => (
+const Message = React.memo(({ message, isUser }) => {
+  const navigate = useNavigate();
+  return (
   <MotionBox
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
@@ -74,7 +76,9 @@ const Message = React.memo(({ message, isUser }) => (
             <Text fontSize="xs" fontWeight="bold" color={isUser ? "gray.800" : "gold.200"}>
               Suggested Projects:
             </Text>
-            {message.projects.map((project, idx) => (
+            {message.projects.map((project, idx) => {
+              const projectId = project.id || project._id;
+              return (
               <Box
                 key={idx}
                 p={2}
@@ -98,7 +102,9 @@ const Message = React.memo(({ message, isUser }) => (
                   mt={2}
                   colorScheme="gold"
                   onClick={() => {
-                    window.location.href = `/project/${project.id}`;
+                    if (projectId) {
+                      navigate(`/project/${projectId}`);
+                    }
                   }}
                 >
                   View Project →
@@ -116,7 +122,8 @@ const Message = React.memo(({ message, isUser }) => (
       )}
     </HStack>
   </MotionBox>
-));
+  );
+});
 
 // Typing indicator
 const TypingIndicator = () => (
