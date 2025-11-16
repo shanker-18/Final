@@ -287,43 +287,15 @@ const ChatRoom = () => {
     // Initialize chat with developer if provided in navigation state
     const initializeChat = async () => {
       if (location.state?.selectedDeveloper) {
-        const developer = location.state.selectedDeveloper;
-        
-        // Create a unique chat ID using both user IDs
-        const chatId = [currentUser.uid, developer.id].sort().join('_');
-        
         try {
-          const chatRef = doc(chatDb, 'chats', chatId);
-          const chatDoc = await getDoc(chatRef);
-
-          if (!chatDoc.exists()) {
-            // Create new chat
-            await setDoc(chatRef, {
-              users: [currentUser.uid, developer.id],
-              createdAt: serverTimestamp(),
-              lastMessage: null,
-              lastMessageTime: null
-            });
-          }
-
-          // Set the selected chat immediately
-          setSelectedChat({
-            id: chatId,
-            user: {
-              id: developer.id,
-              name: developer.displayName || 'Developer',
-              photoURL: developer.photoURL,
-              email: developer.email,
-              displayName: developer.displayName || 'Developer'
-            }
-          });
+          await createChatWithUser(location.state.selectedDeveloper);
         } catch (error) {
-          console.error('Error initializing chat:', error);
+          console.error('Error initializing chat with developer:', error);
           toast({
-            title: "Error",
-            description: "Failed to initialize chat",
-            status: "error",
-            duration: 3000
+            title: 'Error',
+            description: 'Failed to open chat with developer',
+            status: 'error',
+            duration: 3000,
           });
         }
       }
