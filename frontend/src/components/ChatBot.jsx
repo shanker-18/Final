@@ -79,38 +79,39 @@ const Message = React.memo(({ message, isUser }) => {
             {message.projects.map((project, idx) => {
               const projectId = project.id || project._id;
               return (
-              <Box
-                key={idx}
-                p={2}
-                bg={isUser ? "whiteAlpha.300" : "blackAlpha.300"}
-                borderRadius="md"
-                w="100%"
-              >
-                <Text fontSize="xs" fontWeight="bold">{project.title}</Text>
-                <Text fontSize="xs" noOfLines={2}>{project.description}</Text>
-                <Wrap mt={1} spacing={1}>
-                  {project.technologies && project.technologies.map((tech, techIdx) => (
-                    <WrapItem key={techIdx}>
-                      <Tag size="sm" colorScheme="gold" variant="subtle">
-                        <TagLabel fontSize="2xs">{tech}</TagLabel>
-                      </Tag>
-                    </WrapItem>
-                  ))}
-                </Wrap>
-                <Button
-                  size="xs"
-                  mt={2}
-                  colorScheme="gold"
-                  onClick={() => {
-                    if (projectId) {
-                      navigate(`/project/${projectId}`);
-                    }
-                  }}
+                <Box
+                  key={idx}
+                  p={2}
+                  bg={isUser ? "whiteAlpha.300" : "blackAlpha.300"}
+                  borderRadius="md"
+                  w="100%"
                 >
-                  View Project →
-                </Button>
-              </Box>
-            ))}
+                  <Text fontSize="xs" fontWeight="bold">{project.title}</Text>
+                  <Text fontSize="xs" noOfLines={2}>{project.description}</Text>
+                  <Wrap mt={1} spacing={1}>
+                    {project.technologies && project.technologies.map((tech, techIdx) => (
+                      <WrapItem key={techIdx}>
+                        <Tag size="sm" colorScheme="gold" variant="subtle">
+                          <TagLabel fontSize="2xs">{tech}</TagLabel>
+                        </Tag>
+                      </WrapItem>
+                    ))}
+                  </Wrap>
+                  <Button
+                    size="xs"
+                    mt={2}
+                    colorScheme="gold"
+                    onClick={() => {
+                      if (projectId) {
+                        navigate(`/project/${projectId}`);
+                      }
+                    }}
+                  >
+                    View Project →
+                  </Button>
+                </Box>
+              );
+            })}
           </VStack>
         )}
       </Box>
