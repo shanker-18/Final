@@ -29,15 +29,18 @@ import {
   AlertDialogOverlay,
 } from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
-// External auth removed; access is handled server-side
 import AnimatedBackground from '../components/AnimatedBackground';
 import { FaUpload } from 'react-icons/fa';
 import { API_BASE_URL } from '../services/api';
+import { useUser } from '../contexts/UserContext';
+
+const API_URL = `${API_BASE_URL}/api`;
 
 const EditProject = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
+  const { user, userData } = useUser();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [project, setProject] = useState(null);
@@ -47,9 +50,8 @@ const EditProject = () => {
     category: '',
     technologies: [],
     videoUrl: '',
-    price: '',
+    budget: '',
     requirements: '',
-    duration: ''
   });
   const [newTechnology, setNewTechnology] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -71,58 +73,21 @@ const EditProject = () => {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const currentUser = auth.currentUser;
-        if (!currentUser) {
+        if (!user) {
           navigate('/login');
           return;
         }
 
-        console.log('Current User:', {
-          uid: currentUser.uid,
-          email: currentUser.email
-        });
-
-        const token = await currentUser.getIdToken();
-        const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
+        const response = await fetch(`${API_URL}/projects/${projectId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch project');
         }
 
         const responseData = await response.json();
-        console.log('Full API Response:', responseData);
-
-        // Check if the data is nested inside a data property
         const projectData = responseData.data || responseData;
-        console.log('Project Data after extraction:', projectData);
-        console.log('Current User ID:', currentUser.uid);
-        console.log('Project Seller Info:', {
-          seller: projectData.seller,
-          seller_id: projectData.seller_id,
-          sellerId: projectData.sellerId
-        });
 
-        // Check if seller is nested or direct
-        const sellerId = projectData.seller?.id || projectData.seller_id || projectData.sellerId;
-        console.log('Extracted Seller ID:', sellerId);
-        console.log('Comparison:', {
-          sellerId: sellerId,
-          currentUserId: currentUser.uid,
-          areEqual: sellerId === currentUser.uid
-        });
-
-        if (!sellerId || sellerId !== currentUser.uid) {
-          console.log('Access denied - IDs do not match');
-          console.log('Types:', {
-            sellerId: typeof sellerId,
-            userId: typeof currentUser.uid
-          });
+        const ownerId = projectData.seller?.id;
+        if (!ownerId || ownerId !== user.uid) {
           toast({
             title: 'Access Denied',
             description: 'You can only edit your own projects',
@@ -133,19 +98,17 @@ const EditProject = () => {
           return;
         }
 
-        console.log('Access granted - setting form data');
         setProject(projectData);
         setFormData({
           title: projectData.title || '',
           description: projectData.description || '',
           category: projectData.category || '',
           technologies: projectData.technologies || [],
-          videoUrl: projectData.video_url || projectData.videoUrl || '',
-          price: projectData.price?.toString() || '',
+          videoUrl: projectData.videoUrl || projectData.video_url || '',
+          budget: projectData.budget?.toString() || '',
           requirements: projectData.requirements || '',
-          duration: projectData.duration || ''
         });
-        setSellerId(sellerId);
+        setSellerId(ownerId);
       } catch (error) {
         console.error('Error fetching project:', error);
         toast({
@@ -161,7 +124,7 @@ const EditProject = () => {
     };
 
     fetchProject();
-  }, [projectId, navigate, toast]);
+  }, [projectId, navigate, toast, user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -212,9 +175,9 @@ const EditProject = () => {
       setVideoUploading(true);
       
       const formData = new FormData();
-      formData.append('video', videoFile);
+      formData.append('file', videoFile);
       
-      const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/video`, {
+      const response = await fetch(`${API_URL}/projects/${projectId}/upload-video`, {
         method: 'POST',
         body: formData,
       });
@@ -226,7 +189,7 @@ const EditProject = () => {
       const data = await response.json();
       setVideoUploading(false);
       
-      return data.video?.url || null;
+      return data.data?.videoUrl || null;
     } catch (error) {
       setVideoUploading(false);
       console.error('Error uploading video:', error);
@@ -263,68 +226,48 @@ const EditProject = () => {
     setSubmitting(true);
 
     try {
-      const currentUser = auth.currentUser;
-      if (!currentUser) {
+      if (!user) {
         throw new Error('You must be logged in to update a project');
       }
 
-      // Validate that current user is the project owner
-      if (currentUser.uid !== sellerId) {
+      if (user.uid !== sellerId) {
         throw new Error('You do not have permission to edit this project');
       }
 
-      let videoUrl = formData.videoUrl;
-      
-      // If a new video file was selected, upload it first
-      if (videoFile) {
-        const uploadedVideoUrl = await uploadVideo();
-        if (uploadedVideoUrl) {
-          videoUrl = uploadedVideoUrl;
-        }
-      }
+      const budgetValue = parseFloat(formData.budget);
 
-      const token = await currentUser.getIdToken();
-      const priceValue = parseFloat(formData.price);
-
-      // Format data to match MongoDB structure
       const updateData = {
         title: formData.title,
         description: formData.description,
         category: formData.category,
         technologies: formData.technologies,
-        // Use the correct field names matching the database schema
-        video: videoUrl ? {
-          url: videoUrl
-        } : undefined,
-        price: priceValue,
         requirements: formData.requirements,
-        duration: formData.duration,
+        budget: budgetValue,
         seller: {
-          id: currentUser.uid,
-          name: currentUser.displayName || 'Anonymous',
-          avatar: currentUser.photoURL || ''
-        }
+          id: user.uid,
+          name: user.displayName || 'Anonymous',
+          email: user.email || '',
+          role: userData?.currentRole || 'developer',
+        },
       };
 
-      console.log('Sending update data:', updateData);
-
-      // Use the new endpoint with proper error handling
-      const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/update`, {
-        method: 'POST',
+      const response = await fetch(`${API_URL}/projects/${projectId}`, {
+        method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updateData),
       });
 
       const responseData = await response.json();
-      console.log('Server response:', responseData);
-
-      if (!response.ok) {
-        const errorMessage = responseData.message || responseData.detail || 'Failed to update project';
-        console.error('Update error:', errorMessage);
+      if (!response.ok || !responseData.success) {
+        const errorMessage = responseData.message || 'Failed to update project';
         throw new Error(errorMessage);
+      }
+
+      // If a new video file was selected, upload it after updating other fields
+      if (videoFile) {
+        await uploadVideo();
       }
 
       toast({
@@ -349,22 +292,20 @@ const EditProject = () => {
 
   const handleDelete = async () => {
     try {
-      const currentUser = auth.currentUser;
-      if (!currentUser) {
+      if (!user) {
         throw new Error('You must be logged in to delete a project');
       }
 
-      const token = await currentUser.getIdToken();
-      const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
+      const response = await fetch(`${API_URL}/projects/${projectId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to delete project');
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Failed to delete project');
       }
 
       toast({
@@ -607,11 +548,25 @@ const EditProject = () => {
                 </FormControl>
 
                 <FormControl isRequired>
-                  <FormLabel color="white">Price (USD)</FormLabel>
+                  <FormLabel color="white">Requirements</FormLabel>
+                  <Textarea
+                    name="requirements"
+                    value={formData.requirements}
+                    onChange={handleInputChange}
+                    bg="whiteAlpha.200"
+                    color="white"
+                    _hover={{ bg: "whiteAlpha.300" }}
+                    _focus={{ bg: "whiteAlpha.300", borderColor: "gold.400" }}
+                    minH="120px"
+                  />
+                </FormControl>
+
+                <FormControl isRequired>
+                  <FormLabel color="white">Budget (USD)</FormLabel>
                   <Input
-                    name="price"
+                    name="budget"
                     type="number"
-                    value={formData.price}
+                    value={formData.budget}
                     onChange={handleInputChange}
                     bg="whiteAlpha.200"
                     color="white"

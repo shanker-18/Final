@@ -3,11 +3,11 @@ export const sendOtpToPhone = async () => {
   throw new Error('Phone OTP is disabled in this build');
 };
 
-import { API_BASE_URL } from '../services/api';
+import { API_URL } from '../config/apiConfig';
 
 // Function to send OTP to email
 export const sendOtpToEmail = async (email) => {
-    const response = await fetch(`${API_BASE_URL}/send-otp`, {
+    const response = await fetch(`${API_URL}/send-otp`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -37,9 +37,7 @@ import { getUserRole } from '../utils/userRole';
 import AddProject from "./AddProject";
 import { db } from '../config/firebase';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
-import { API_BASE_URL } from '../services/api';
-
-const API_URL = `${API_BASE_URL}/api`;
+import { API_URL } from '../config/apiConfig';
 
 const MotionBox = motion.create(Box);
 const MotionHeading = motion.create(Heading);
@@ -272,7 +270,7 @@ const Projects = () => {
         if (role === 'developer' && user?.uid) params.set('sellerId', user.uid);
 
         // Fetch projects from backend API
-        const response = await fetch(`${API_URL}/projects?${params.toString()}`);
+        const response = await fetch(`${API_URL}/api/projects?${params.toString()}`);
         if (!response.ok) {
           throw new Error('Failed to fetch projects');
         }

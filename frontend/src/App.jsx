@@ -120,7 +120,14 @@ function App() {
         <Route path="seeker-survey" element={<ProtectedRoute><SeekerSurvey /></ProtectedRoute>} />
         <Route path="add-project" element={<ProtectedRoute><AddProject /></ProtectedRoute>} />
         <Route path="dev-reels" element={<DevReels />} />
-        <Route path="edit-project/:projectId" element={<EditProject />} />
+        <Route
+          path="edit-project/:projectId"
+          element={
+            <ProtectedRoute>
+              <EditProject />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="edit-profile"
           element={

@@ -181,6 +181,86 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// PUT /api/projects/:id - update an existing project
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body || {};
+
+    const project = await Project.findById(id);
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: 'Project not found',
+      });
+    }
+
+    // Only update fields that are provided
+    const updatableFields = [
+      'title',
+      'description',
+      'technologies',
+      'requirements',
+      'budget',
+      'category',
+      'status',
+    ];
+
+    updatableFields.forEach((field) => {
+      if (Object.prototype.hasOwnProperty.call(updates, field)) {
+        project[field] = updates[field];
+      }
+    });
+
+    // Seller can also be updated if provided (e.g., name/avatar changes)
+    if (updates.seller) {
+      project.seller = {
+        ...project.seller?.toObject?.() ?? project.seller,
+        ...updates.seller,
+      };
+    }
+
+    const saved = await project.save();
+
+    return res.json({
+      success: true,
+      data: saved,
+    });
+  } catch (err) {
+    console.error('Error updating project:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+});
+
+// DELETE /api/projects/:id - delete a project
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const project = await Project.findByIdAndDelete(id);
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: 'Project not found',
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: 'Project deleted successfully',
+    });
+  } catch (err) {
+    console.error('Error deleting project:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+});
+
 // GET /api/projects/sample - create and return a sample project (for testing only)
 router.get('/sample', async (_req, res) => {
   try {
