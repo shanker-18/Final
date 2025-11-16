@@ -276,7 +276,16 @@ const AddProject = () => {
           });
 
           if (!uploadResponse.ok) {
-            throw new Error('Failed to upload video');
+            let message = 'Failed to upload video';
+            try {
+              const errorData = await uploadResponse.json();
+              if (errorData?.message) {
+                message = errorData.message;
+              }
+            } catch (_err) {
+              // ignore JSON parse errors, keep default message
+            }
+            throw new Error(message);
           }
 
           const uploadResult = await uploadResponse.json();
